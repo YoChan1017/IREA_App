@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoginPage</title>
+  <link rel="stylesheet" href="./styles/login.css" />
+  <link rel="stylesheet" href="../Dialog/dialog_login.css">
+  <script src="../scripts/login.js"></script>
+</head>
+<body>
+  <div class="login-element">
+    <div class="login-title">
+      <p>IREA GOLF ACADEMY</p>
+    </div>
+    <div class="login-window">
+      <h1>LOG IN</h1>
+      <div class="login-input">
+        <input id="username" type="text" placeholder="Username">
+        <input id="password" type="password" placeholder="Password">
+        <button id="loginButton" type="button">Log In</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="errorDialog" class="dialog-container">
+    <p id="errorMessage" class="dialog-message"></p>
+    <button id="closeDialog" class="dialog-close">확인</button>
+  </div>
+</body>
+</html>

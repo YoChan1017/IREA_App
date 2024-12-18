@@ -1,0 +1,131 @@
+@font-face {
+  font-family: 'Pretendard-M';
+  src: url('./fonts/Pretendard-Medium.ttf');
+}
+
+@font-face {
+  font-family: 'Pretendard-R';
+  src: url('./fonts/Pretendard-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'Pretendard-B';
+  src: url('./fonts/Pretendard-Bold.ttf');
+}
+
+body {
+  background-image: url('./img/background.jpg');
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+  height: 100vh;
+  margin: 0;
+}
+
+header{
+  margin-top: 20px;
+  font-family: "Pretendard-M";
+  font-size: 14px;
+  display: flex;
+  width: 80%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+header div {
+  display: flex;
+  width: 90%;
+}
+
+header button {
+  font-family: 'Pretendard-M';
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+section {
+  width: 50%;
+  height: 70%;
+  background-color: #a6b0ad60;
+  margin-top: 35px;
+  padding: 30px;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: auto;
+  border-radius: 60px;
+}
+
+h3 {
+  margin: 0 auto 30px;
+  font-family: "Pretendard-B";
+  font-size: 26px;
+}
+
+.btn-container {
+  display: flex;
+  width: 610px;
+  justify-content: right;
+}
+
+.btn-container button {
+  padding: 0 4px;
+  font-family: 'Pretendard-R';
+  font-size: 15px;
+}
+
+.styled-table {
+  height: 450px;
+  margin: 10px;
+  border: solid 1px #fff;
+  font-family: "Pretendard-R";
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.table-title {
+  background-color: #fffffff7;
+  color: #00382e;
+  padding: 5px 13px;
+}
+
+.table-title, .table-contents {
+  display: flex;
+  align-items: center;
+  border: solid 1px #fff;
+}
+
+.table-contents {
+  padding: 5px 13px;
+}
+
+.table-contents:hover {
+  background-color: #ffffff3b;
+}
+
+.small {
+  width: 80px;
+  padding: 5px 20px;
+}
+
+.big {
+  width: 150px;
+  padding: 5px 20px;
+}
+
+.button-cont {
+  width: 150px;
+  display: flex;
+  justify-content: right;
+}
+
+.button-cont button {
+  margin-left: 8px;
+  height: 30px;
+  width: 45px;
+}

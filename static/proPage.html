@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProPage</title>
+  <link rel="stylesheet" href="./styles/manager.css">
+  <script defer src="../scripts/pro.js"></script>
+  <link rel="stylesheet" href="../dialog/dialog.css">
+</head>
+<body>
+  <header>
+    <p>IREA GOLF ACADEMY</p>
+    <div><button onclick="location.href='homePage.html'">홈으로</button></div>
+  </header>
+  <section>
+    <h3>프로관리</h3>
+    <div class="btn-container"><button title="프로 추가">+</button></div>
+    <article class="styled-table">
+      <div class="table-title">
+        <div class="big">이름</div>
+        <div class="button-cont"></div>
+      </div>
+      <div id="table-contents"></div>
+    </article>
+  </section>
+
+  <div id="proDialog" class="dialog-container">
+    <div class="dialog-title" id="dialogTitle"></div>
+    <input type="text" id="dialogName" class="dialog-input" placeholder="프로 이름 입력">
+    <div class="dialog-buttons">
+        <button id="dialogConfirm" class="confirm">확인</button>
+        <button id="dialogCancel" class="cancel">취소</button>
+    </div>
+  </div>
+
+  <div id="deleteDialog" class="dialog-container">
+    <div class="dialog-title">정말 삭제하시겠습니까?</div>
+    <div class="dialog-buttons">
+        <button id="deleteConfirm" class="confirm">확인</button>
+        <button id="deleteCancel" class="cancel">취소</button>
+    </div>
+  </div>
+</body>
+</html>

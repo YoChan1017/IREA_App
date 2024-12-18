@@ -1,0 +1,39 @@
+/* Dialog 컨테이너 스타일 */
+.dialog-container {
+    display: none; /* 기본적으로 숨김 */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    z-index: 1000;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* 메시지 텍스트 */
+.dialog-message {
+    margin: 0;
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 16px;
+}
+
+/* 닫기 버튼 스타일 */
+.dialog-close {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.dialog-close:hover {
+    background-color: #0056b3;
+}

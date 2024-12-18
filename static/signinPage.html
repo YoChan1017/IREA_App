@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SigninPage</title>
+  <link rel="stylesheet" href="./styles/signin.css" />
+  <script defer src="../scripts/signin.js"></script>
+  <link rel="stylesheet" href="../dialog/dialog.css">
+</head>
+<body>
+  <header>
+    <h3>IREA GOLF ACADEMY</h3>
+    <div><button onclick="location.href='homePage.html'">홈으로</button></div>
+  </header>
+  <div class="signin-element">
+    <h1>회원신청</h1>
+    <form class="signin-form">
+      <div>
+        <h2>회원정보</h2>
+        <hr>
+        <div class="personal-info">
+          <div class="name-gender-container">
+            <label for="name" class="label-small">
+              <span>이름</span>
+              <input type="text" id="name" name="name" required>
+            </label>
+            
+            
+            <label class="label-big">
+              <span>성별</span>
+              <select id="gender" name="gender" required>
+                <option value="female">여자</option>
+                <option value="male">남자</option>
+              </select>
+            </label>
+            
+          </div>
+          <div class="big-input-container">
+            <label for="birth_year">생년월일</label>
+            <div class="birth-cont">
+            <!-- 연도 드롭다운 -->
+            <div class="custom-select" id="year-select">
+              <div class="select-selected">Year
+                <img src="./styles/img/downtriangle.png" alt="selectBtnImg" />
+              </div>
+              <div class="select-items">
+                <script>
+                  for (let year = 1900; year <= 2050; year++) {
+                    document.write('<div data-value="' + year + '">' + year + '</div>');
+                  }
+                </script>
+              </div>
+            </div>
+        
+            <!-- 월 드롭다운 -->
+            <div class="custom-select" id="month-select">
+              <div class="select-selected">Month
+                <img src="./styles/img/downtriangle.png" alt="selectBtnImg" />
+              </div>
+              <div class="select-items">
+                <script>
+                  for (let month = 1; month <= 12; month++) {
+                    document.write('<div data-value="' + month + '">' + month + '</div>');
+                  }
+                </script>
+              </div>
+            </div>
+        
+            <!-- 일 드롭다운 -->
+            <div class="custom-select" id="day-select">
+              <div class="select-selected">Day
+                <img src="./styles/img/downtriangle.png" alt="selectBtnImg" />
+              </div>
+              <div class="select-items">
+                <script>
+                  for (let day = 1; day <= 31; day++) {
+                    document.write('<div data-value="' + day + '">' + day + '</div>');
+                  }
+                </script>
+              </div>
+            </div>
+            </div>
+          </div>
+        
+          <script src="./js/customSelect.js"></script>
+          <div class="big-input-container">
+            <label>전화번호</label>
+            <input type="tel" id="phone" name="phone" placeholder="010-1234-5678" pattern="[0-9]{3}-[0-9]{4}-[0-9]{4}" title="전화번호는 010-1234-5678 형식으로 입력하세요." required>
+          </div>
+            
+        </div>
+      </div>
+      <div class="class-info">
+        <!-- 수업 정보 받는 부분 -->
+        <h2>수업정보</h2>
+        <hr>
+        <div class="registration-date">
+          <label class="label-small" for="start_date">
+            <span>등록일자</span>
+            <input type="date" id="start_date" name="start_date" required>
+          </label>
+          
+          <label class="label-big" for="months">
+            <span>등록기간(개월)</span>
+            <select type="number" id="months" name="months" required>
+              <option value="1">1</option>
+              <option value="3">3</option>
+              <option value="6">6</option>
+              <option value="12">12</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="label-small" for="expiry_date">
+          <span>만료일</span>
+          <input type="date" id="expiry_date" name="expiry_date" readonly>  
+        </label>
+        <!-- 만료일 계산 js -->
+        <script src="./js/expiryDate.js"></script>
+
+        <div class="lesson-info-container">
+          <label class="label-small">
+            <span>골프레슨</span>
+            <select id="lesson" name="lesson" required>
+              <option value="true">O</option>
+              <option value="false">X</option>
+            </select>
+          </label>
+          <label class="label-big">
+            <span>담당프로 선택</span>
+            <select id="manager" name="manager" required>
+              <!-- pro 정보 표시 -->
+            </select>
+          </label>
+        </div>
+        <label class="label-small">
+          <span>결제방법</span>
+          <select id="payment_option" name="payment_option" required>
+            <option value="A">카드</option>
+            <option value="B">현금</option>
+            <option value="C">기타</option>
+          </select>
+        </label>
+        <label class="label-small">
+          <span>가격</span>
+          <input id="price" class="price" type="number" placeholder="100000" step="1000" min="0">
+        </label>
+      </div>
+      <div class="submit-btn-container">
+        <button class="submit-btn" type="submit">등록</button>
+      </div>
+      
+    </form>
+  </div>
+
+  <div id="successDialog" class="dialog-container">
+    <div class="dialog-title">회원이 성공적으로 등록되었습니다!</div>
+    <div class="dialog-buttons">
+        <button id="dialogConfirm" class="confirm">확인</button>
+    </div>
+  </div>
+
+  <div id="alertDialog" class="dialog-container">
+    <div class="dialog-title" id="alertMessage">알림 메시지</div>
+    <div class="dialog-buttons">
+        <button id="alertConfirm" class="confirm">확인</button>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,370 @@
+@font-face {
+  font-family: 'Pretendard-M';
+  src: url('./fonts/Pretendard-Medium.ttf');
+}
+
+@font-face {
+  font-family: 'Pretendard-R';
+  src: url('./fonts/Pretendard-Regular.ttf');
+}
+
+body {
+  background-image: url('./img/background.jpg');
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+header {
+  display: flex;
+  width: 80%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 18px;
+  margin-bottom: 30px;
+  font-family: 'Pretendard-M';
+  font-size: 14px;
+  color: #fff;
+}
+
+header div {
+  display: flex;
+  width: 90%;
+}
+
+header button {
+  font-family: 'Pretendard-M';
+  padding: 3px 5px;
+  font-size: 12px;
+}
+
+hr {
+  width: 90%;
+}
+
+section {
+  width: 80%;
+}
+
+.locker-info-container {
+  display: flex;
+  margin: 15px;
+  justify-content: space-between;
+  color: #fff;
+  font-family: 'Pretendard-M';
+  font-size: 13px;
+  span {
+    display: flex;
+    align-items: center;
+    div {
+      width: 4px;
+      height: 13px;
+      margin-right: 10px;
+      margin-left: 4px;
+      background-color: #fff;
+    }
+  }
+}
+
+.locker-info-colorbox {
+  display: flex;
+
+  div {
+    width: 30px;
+    height: 25px;
+    margin: 0 10px;
+    border: solid 0.1px;
+  }
+}
+
+#box-wrapper {
+  border: solid 1px #fff;
+  padding: auto;
+}
+
+/* 가로로 11개의 박스를 한 줄에 정렬 */
+.row {
+  display: flex;
+  margin-bottom: 1px; /* 줄 간 간격 */
+}
+
+.popupBtn {
+  width: 85px;
+  height: 75px;
+  margin: 1px;
+  border: solid 0.1px #fff;
+  background-color: #00382e;
+  text-align: start;
+  color: #fff;
+  font-family: 'Pretendard-R';
+  font-size: 17px;
+}
+
+.locker-box{
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#modalWrap {
+  position: fixed; /* 화면에 고정 */
+  z-index: 1; /* 상위에 위치 */
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.352); /* 반투명한 배경색 */
+  display: none; /* 초기에는 숨김 */
+}
+
+#modalBody {
+  width: 800px;
+  height: 600px;
+  padding: 30px 30px;
+  margin: 50px auto;
+  border: solid 1.8px #fff;
+  background-color: #003128;
+  color: #fff;
+  font-family: 'Pretendard-R';
+
+  form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 25px;
+  }
+}
+
+.search-input {
+  font-size: 16px;
+  margin-bottom: 20px;
+  input {
+    width: 200px;
+    margin-left: 10px;
+    padding: 5px 8px;
+    border: solid 1px #fff;
+    background-color: #003128;
+    color: #fff;
+  }
+}
+
+.search-result {
+  width: 600px;
+  display: flex;
+  margin: 20px;
+  justify-content: center;
+}
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  border: solid 1px #fff;
+  height: 150px;
+}
+
+.styled-table thead tr {
+  background-color: #fffffff0;
+  color: #003128;
+  text-align: left;
+}
+
+.styled-table thead, .styled-table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.styled-table tbody {
+  display: block;
+  height: 150px;
+  overflow-y: auto;
+}
+.styled-table tbody tr:hover {
+  background-color: #ffffff60;
+}
+
+.styled-table th,
+.styled-table td {
+  padding: 10px 10px 10px 15px;
+}
+
+.registration-box {
+  border: solid 1px #fff;
+}
+
+.member-btn {
+  text-align: center;
+}
+
+.action-btn {
+  display: none;
+  font-family: "Pretendard-R";
+  font-size: 14px;
+  color: #003128;
+  padding: 2px 10px;
+  border-radius: 5px;
+  border: solid 0.1px #fff;
+}
+
+.styled-table tbody tr:hover .action-btn {
+  display: inline-block;
+}
+
+.member-name-box {
+  margin: 20px;
+}
+
+.member-name {
+  background-color: #ffffff60;
+  padding: 5px 20px;
+  margin-left: 15px;
+  width: auto;
+  border-radius: 5px;
+}
+
+.registration-box {
+  width: 560px;
+  padding: 30px;
+}
+
+#closeBtn {
+  float: right;
+  font-weight: bold;
+  color: #777;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.registration-date {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.payment-info {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.label-small {
+  width: 230px;
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Pretendard-R';
+  font-size: 14px;
+  align-items: center;
+}
+
+.label-small input, select {
+  width: 130px;
+  height: 25px;
+  padding-left: 7px;
+  background-color: #003128;
+  border: 0.5px solid #fff;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 12px;
+}
+
+.price {
+  width: 130px;
+  height: 25px;
+  padding-left: 7px;
+  background-color: #003128;
+  border: 0.5px solid #fff;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.register-btn {
+  margin: 20px;
+  width: 100px;
+  height: 30px;
+  font-family: 'Pretendard-R';
+  font-size: 14px;
+  color: #003128;
+}
+
+.register-btn:hover {
+  background-color: #ffffff36;
+  border: solid 1px #fff;
+  border-radius: 2px;
+  color: #fff;
+}
+
+/* 기본 셀렉트 스타일 */
+.custom-select {
+  position: relative;
+  display: inline-block;
+  width: 120px;
+  margin-right: 10px;
+}
+
+/* 선택된 항목 스타일 */
+.select-selected {
+  background-color: none;
+  padding: 1px;
+  border: 1.2px solid white;
+  cursor: pointer;
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* 드롭다운 아이템 컨테이너 */
+.select-items {
+  display: none;
+  position: absolute;
+  width: 100%;
+  max-height: 200px; /* 한 번에 10개 정도만 보이도록 제한 */
+  overflow-y: auto;  /* 스크롤 추가 */
+  background-color: white;
+  border: 1px solid #ccc;
+  z-index: 100;
+  box-sizing: border-box;
+  color: #999;
+}
+
+/* 드롭다운 항목 스타일 */
+.select-items div {
+  padding: 1.5px 10px;
+  cursor: pointer;
+
+}
+
+.select-items div:hover {
+  background-color: #22a49788;
+}
+
+/* 드롭다운 아이템 마지막 항목에서 밑줄 제거 */
+.select-items div:last-child {
+  border-bottom: none;
+}
+
+#locker-number-container input {
+  width: 130px; /* 다른 드롭다운과 동일한 너비 */
+  height: 25px; /* 높이도 동일 */
+  padding: 0; /* 안쪽 여백 제거 */
+  text-align: center; /* 텍스트 가운데 정렬 */
+  background-color: #003128; /* 배경색 동일하게 */
+  border: 0.5px solid #fff; /* 테두리 색상 */
+  border-radius: 10px; /* 둥근 모서리 */
+  color: #fff; /* 글자색 흰색 */
+  font-size: 12px; /* 글자 크기 동일 */
+  font-family: 'Pretendard-R';
+}
+
+.search-result-title th,td {
+  text-align: center;
+}

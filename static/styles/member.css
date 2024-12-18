@@ -1,0 +1,186 @@
+@font-face {
+  font-family: 'Pretendard-M';
+  src: url('./fonts/Pretendard-Medium.ttf');
+}
+
+@font-face {
+  font-family: 'Pretendard-R';
+  src: url('./fonts/Pretendard-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'Pretendard-B';
+  src: url('./fonts/Pretendard-Bold.ttf');
+}
+
+body {
+  background-image: url('./img/background.jpg');
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+  height: 100vh;
+  margin: 0;
+}
+
+header{
+  margin-top: 20px;
+  font-family: "Pretendard-M";
+  font-size: 14px;
+  display: flex;
+  width: 80%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+header div {
+  display: flex;
+  width: 90%;
+}
+
+header button {
+  font-family: 'Pretendard-M';
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+/* 출력 table css */
+
+section {
+  width: 80%;
+  height: 75%;
+  background-color: #a6b0ad60;
+  margin-top: 45px;
+  padding: 30px;
+  margin-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: auto;
+  border-radius: 60px;
+}
+
+h3 {
+  margin: 0 auto 30px;
+  font-family: "Pretendard-B";
+  font-size: 26px;
+}
+
+.search-container {
+  width: 90%;
+  align-items: center;
+
+  div {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+  }
+}
+
+.search-container input {
+  background: none;
+  border: 1.2px solid #fff;
+  color: #fff;
+  box-sizing: border-box;
+  height: 25px;
+  width: 150px;
+  font-family: 'Pretendard-M';
+  font-size: 13px;
+  padding-left: 8px;
+  margin-right: 10px;
+}
+
+::placeholder {
+  color: #ffffffc0;
+  font-family: 'Pretendard-M';
+}
+
+.search-container button {
+  height: 26px;
+  box-sizing: border-box;
+  color: #00382e;
+}
+
+.search-container select {
+  height: 25px;
+  box-sizing: border-box;
+  margin-right: 10px;
+  background: none;
+  border: 1.2px solid #fff;
+  color: #fff;
+  font-family: 'Pretendard-M';
+  font-size: 13px;
+  padding-left: 3px;
+}
+
+.search-container option {
+  color: #00382e;
+}
+
+#gender {
+  width: 60px;
+}
+
+#manager, #months {
+  width: 80px;
+}
+
+form {
+  margin-left: 10px;
+}
+
+article {
+  margin: 10px;
+  width: 90%;
+}
+
+.styled-table {
+  height: 450px;
+  width: 100%;
+  margin: 10px;
+  border: solid 1px #fff;
+  font-family: "Pretendard-R";
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.table-title {
+  background-color: #fffffff7;
+  color: #00382e;
+  padding: 5px 13px;
+}
+
+.table-title, .table-contents {
+  display: flex;
+  align-items: center;
+  border: solid 1px #fff;
+}
+
+.table-contents {
+  padding: 2px 13px;
+}
+
+.table-contents:hover {
+  background-color: #ffffff3b;
+}
+
+.small {
+  text-align: center;
+  width: 80px;
+  padding: 5px;
+}
+
+.medium {
+  text-align: center;
+  width: 100px;
+  padding: 5px;
+}
+
+.big {
+  text-align: center;
+  width: 150px;
+  padding: 5px;
+}

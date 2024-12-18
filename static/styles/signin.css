@@ -1,0 +1,284 @@
+@font-face {
+  font-family: 'Pretendard-B';
+  src: url('./fonts/Pretendard-Bold.ttf');
+}
+@font-face {
+  font-family: 'Pretendard-SB';
+  src: url('./fonts/Pretendard-SemiBold.ttf');
+}
+@font-face {
+  font-family: 'Pretendard-R';
+  src: url('./fonts/Pretendard-Regular.ttf');
+}
+@font-face {
+  font-family: 'Pretendard-M';
+  src: url('./fonts/Pretendard-Medium.ttf');
+}
+@font-face {
+  font-family: 'NotoSans-R';
+  src: url('./fonts/NotoSansKR-Regular.ttf');
+}
+
+header h3 {
+  font-family: "Pretendard-R";
+  font-size: 14px;
+  margin: 35px 0 20px;
+}
+
+header {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+header div {
+  display: flex;
+  width: 50%;
+  margin-bottom: 20px;
+
+  button {
+    font-family: 'Pretendard-M';
+    padding: 5px 10px;
+  font-size: 12px;
+  }
+}
+
+body {
+  background-image: url('./img/background.jpg');
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height:100vh;
+  width: 100%;
+  color: white;
+  margin: 0;
+}
+
+.signin-element {
+  background-color: rgba(255, 255, 255, 0.251);
+  display: flex;
+  height: 80%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  margin-bottom: 30px;
+  width: 650px;
+  border-radius: 60px;
+  overflow: auto;
+  font-family: 'Pretendard-R';
+  font-size: 15px;
+
+  h1 {
+    font-size: 25px;
+    margin-top: 0;
+    margin-bottom: 40px;
+    font-family: 'Pretendard-B';
+    font-size: 26;
+  }
+
+  h2 {
+    font-family: 'Pretendard-SB';
+    font-size: 21px;
+    margin-bottom: 2px;
+  }
+
+  hr {
+    margin: 8px 0 15px;
+    border: 0;
+    border-bottom: 1.4px dashed #eee;
+    background: #999;
+  }
+
+  input {
+    background: none;
+    height: 30px;
+    border-color: white;
+    padding: 3px;
+    border-style: solid;
+    border-radius: 8px;
+    border-width: 1.3px;
+    color: white;
+    box-sizing: border-box;
+  }
+
+  select {
+    background: none;
+    height: 30px;
+    padding: 3px;
+    border-color: white;
+    border-style: solid;
+    border-radius: 8px;
+    border-width: 1.3px;
+    color: white;
+  }
+}
+
+.signin-form {
+  width: 90%;
+  
+  option {
+    background-color: #0c3234;
+    color: #eee;
+  }
+}
+
+
+.registration-date, .lesson-info-container, .name-gender-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.big-input-container {
+  width: 330px;
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 0 15px;
+  align-items: center;
+}
+
+.big-input-container label {
+  width: 60px;
+  display: flex;
+  justify-content: right;
+}
+
+.birth-cont, input {
+  width: 230px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.class-info {
+  display: flex;
+  flex-direction: column;
+  margin-top: 40px;
+  font-family: "Pretendard-R";
+  font-size: 15px;
+}
+
+::placeholder {
+  color: white;
+  opacity: 1; /* Firefox */
+}
+
+.label-small, .label-big {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 5px 0 15px;
+}
+
+.label-small {
+  width: 240px;
+}
+
+.label-big {
+  width: 270px;
+}
+
+.label-small input, select, .price {
+  width: 140px;
+}
+
+.label-small span {
+  width: 60px;
+  display: flex;
+  justify-content: right;
+}
+
+.label-big span {
+  width: 90px;
+  display: flex;
+  justify-content: right;
+}
+
+/* 가격 출력창 스타일링 */
+.price {
+  width: 140px;
+  height: 30px;
+  padding-left: 7px;
+  background: none;
+  border: 0.5px solid #fff;
+  border-radius: 8px;
+  box-sizing: border-box;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+/* 기본 셀렉트 스타일 */
+.custom-select {
+  position: relative;
+  display: inline-block;
+  width: auto;
+  margin: 0;
+
+  img {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+/* 선택된 항목 스타일 */
+.select-selected {
+  background-color: none;
+  height: 23px;
+  width: 65px;
+  padding: 2px;
+  margin: 0;
+  border: 1.3px solid white;
+  cursor: pointer;
+  border-radius: 8px;
+  text-align: center;
+  font-family: "NotoSans-R";
+  font-size: 13px;
+}
+
+/* 드롭다운 아이템 컨테이너 */
+.select-items {
+  display: none;
+  position: absolute;
+  width: 90%;
+  max-height: 200px; /* 한 번에 10개 정도만 보이도록 제한 */
+  overflow-y: auto;  /* 스크롤 추가 */
+  background-color: white;
+  border: 1px solid #ccc;
+  z-index: 100;
+  box-sizing: border-box;
+  color: #999;
+}
+
+/* 드롭다운 항목 스타일 */
+.select-items div {
+  padding: 1.5px 10px;
+  cursor: pointer;
+
+}
+
+.select-items div:hover {
+  background-color: #22a49788;
+}
+
+/* 드롭다운 아이템 마지막 항목에서 밑줄 제거 */
+.select-items div:last-child {
+  border-bottom: none;
+}
+
+.submit-btn-container {
+  display: flex;
+  flex-direction: row-reverse;
+  margin-top: 50px;
+}
+
+.submit-btn {
+  width: 75px;
+  height: 30px;
+  font-family: 'Pretendard-R';
+}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ManagerPage</title>
+  <link rel="stylesheet" href="./styles/manager.css">
+  <script defer src="../scripts/manager.js"></script>
+  <link rel="stylesheet" href="../dialog/dialog.css">
+</head>
+<body>
+  <header>
+    <p>IREA GOLF ACADEMY</p>
+    <div><button onclick="location.href='homePage.html'">홈으로</button></div>
+  </header>
+  <section>
+    <h3>직원관리</h3>
+    <article class="styled-table">
+      <div class="table-title">
+        <div class="small">이름</div>
+        <div class="small">아이디</div>
+        <div class="big">비밀번호</div>
+        <div class="small">권한</div>
+        <div class="button-cont"></div>
+      </div>
+      <div id="table-contents"></div>
+    </article>
+  </section>
+
+  <div id="managerDialog" class="dialog-container">
+    <div class="dialog-title" id="dialogTitle"></div>
+    <input type="text" id="dialogName" class="dialog-input" placeholder="이름 입력">
+    <input type="text" id="dialogRole" class="dialog-input" placeholder="권한 입력 (ADMIN 또는 USER)">
+    <input type="password" id="dialogPassword" class="dialog-input" placeholder="비밀번호 입력">
+    <div class="dialog-buttons">
+        <button id="dialogConfirm" class="confirm">확인</button>
+        <button id="dialogCancel" class="cancel">취소</button>
+    </div>
+  </div>
+</body>
+</html>

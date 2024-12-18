@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MemberPage</title>
+  <link rel="stylesheet" href="./styles/member.css" />
+  <script defer src="../scripts/member.js"></script>
+  <link rel="stylesheet" href="../dialog/dialog.css">
+</head>
+<body>
+  <header>
+    <p>IREA GOLF ACADEMY</p>
+    <div><button onclick="location.href='homePage.html'">홈으로</button></div>
+  </header>
+  <section>
+    <h3>회원정보</h3>
+    <div class="search-container">
+      <!-- 회원 검색 부분-->
+      <form>
+        <div>
+          <input id="name" name="name" placeholder="이름 검색"/>
+          <button>검색</button>
+        </div>
+
+        <div>
+          <select id="gender" name="gender">
+            <option disabled hidden selected>성별</option>
+            <option value="female">여자</option>
+            <option value="male">남자</option>
+          </select>
+          <select id="manager" name="manager">
+            <option disabled hidden selected>프로정보</option>
+            <!-- pro 테이블 정보로 분류 -->
+            <select id="manager" name="manager" required>
+          </select>
+          <select id="months" name="months">
+            <option disabled hidden selected>등록기간</option>
+            <option value="1">1개월</option>
+            <option value="3">3개월</option>
+            <option value="6">6개월</option>
+            <option value="12">12개월</option>
+            <option value="date-other">기타</option>
+          </select>
+        </div>
+      </form>
+    </div>
+
+    <article>
+      <div class="styled-table">
+        <div class="table-title">
+          <div class="small">이름</div>
+          <div class="small">성별</div>
+          <div class="medium">생년월일</div>
+          <div class="big">전화번호</div>
+          <div class="big">등록일자</div>
+          <div class="small">등록기간</div>
+          <div class="big">만료일자</div>
+          <div class="medium">프로정보</div>
+          <div class="small">결제정보</div>
+          <div class="small">가격</div>
+          <div class="small"></div>
+        </div>
+        <!-- 회원 결과 출력 -->
+        <div id="table-contents"></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- 수정 다이얼로그 -->
+  <div id="editDialog" class="dialog-container">
+    <div class="dialog-title">회원 정보 수정</div>
+    <form id="editForm">
+        <input id="editName" type="text" placeholder="이름" class="dialog-input" required />
+        <select id="editGender" class="dialog-input">
+            <option value="M">남자</option>
+            <option value="F">여자</option>
+        </select>
+        <input id="editBirthDate" type="date" class="dialog-input" required />
+        <input id="editPhone" type="text" placeholder="전화번호" class="dialog-input" required />
+        <input id="editStartDate" type="date" class="dialog-input" required />
+        <input id="editDuration" type="number" placeholder="등록기간(개월)" class="dialog-input" required />
+        <select id="editProInfo" class="dialog-input"></select>
+        <input id="editPrice" type="number" placeholder="가격" class="dialog-input" required />
+        <div class="dialog-buttons">
+            <button type="button" id="editConfirm" class="confirm">저장</button>
+            <button type="button" id="editCancel" class="cancel">취소</button>
+        </div>
+    </form>
+  </div>
+
+  <!-- 삭제 다이얼로그 -->
+  <div id="deleteDialog" class="dialog-container">
+    <div class="dialog-title">정말 삭제하시겠습니까?</div>
+    <div class="dialog-buttons">
+        <button id="deleteConfirm" class="confirm">확인</button>
+        <button id="deleteCancel" class="cancel">취소</button>
+    </div>
+  </div>
+</body>
+</html>
