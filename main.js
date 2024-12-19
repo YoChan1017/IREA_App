@@ -2,28 +2,50 @@ const { app, BrowserWindow, ipcMain } = require("electron");    // Electron
 const sqlite3 = require("sqlite3").verbose();                   // SQLite3
 const iconv = require("iconv-lite");                            // iconv-lite
 
+const fs = require("fs");
 const path = require('path');
-const iconPath = path.join(__dirname, 'static/icons/app-icon.ico');
 
 let mainWindow;
+
+// 개발 환경 및 static 경로 설정
+const isDev = !app.isPackaged;
+const staticPath = isDev
+    ? path.join(__dirname, "static") // 개발 환경
+    : path.join(process.resourcesPath, "static"); // 배포 환경
+
+// 데이터베이스 경로 설정
+const dbPath = isDev
+    ? path.join(__dirname, "database/membership.db") // 개발 환경
+    : path.join(app.getPath("userData"), "membership.db"); // 배포 환경
+
+// 데이터베이스 파일 복사
+if (!fs.existsSync(dbPath)) {
+    const sourceDbPath = path.join(__dirname, "database/membership.db");
+    if (fs.existsSync(sourceDbPath)) {
+        fs.copyFileSync(sourceDbPath, dbPath);
+        console.log("Database copied to:", dbPath);
+    } else {
+        console.error("Source database file not found:", sourceDbPath);
+    }
+}
 
 function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1160, // 창 너비
         height: 680, // 창 높이
-        icon: iconPath, // 아이콘 경로 설정
+        icon: path.join(staticPath, "icons/app-icon.ico"), // 아이콘 경로
         webPreferences: {
             nodeIntegration: true, // Node.js 통합 활성화
             contextIsolation: false, // 컨텍스트 격리 비활성화
         },
         resizable: true, // 창 크기 조절 가능
     });
-    
+
     console.log('Current directory:', __dirname);
     console.log('Icon path:', path.join(__dirname, 'static/icons/app-icon.ico'));
     
     // 초기 페이지: 로그인 페이지
-    mainWindow.loadFile("static/loginPage.html");
+    mainWindow.loadFile(path.join(__dirname, "static/loginPage.html"));
 
     // Zoom 조정 이벤트 (배율 축소)
     mainWindow.webContents.setZoomFactor(0.65); // 70%로 축소
@@ -43,32 +65,64 @@ app.whenReady().then(() => {
 });
 
 // 로그인 이벤트 처리
-ipcMain.on("login-attempt", (event, { username, password }) => {
-    console.log("Login attempt received:", { username, password }); // 디버깅 로그 추가
+let loggedInUser = null; // 로그인된 사용자 정보
 
-    const db = new sqlite3.Database("./database/membership.db", (err) => {
-        if (err) {
-            console.error("Database connection error:", err.message);
-        } else {
-            console.log("Connected to the database.");
-        }
-    });
+ipcMain.on("login-attempt", (event, { username, password }) => {
+    const db = new sqlite3.Database(dbPath);
 
     db.get(
         "SELECT * FROM USER WHERE irea_id = ? AND irea_pw = ?",
         [username, password],
         (err, row) => {
             if (err) {
-                console.error("Database error:", err.message);
                 event.reply("login-response", { success: false, error: "Database error" });
             } else if (row) {
-                // console.log("Original name:", row.name);
-                // row.name = Buffer.from(row.name, "binary").toString("utf-8"); // UTF-8로 강제 디코딩
-                console.log("Login successful for user:", row);
+                loggedInUser = {
+                    id: row.user_id,
+                    name: row.name,
+                    role: row.role,
+                };
                 event.reply("login-response", { success: true });
             } else {
-                console.log("Invalid credentials for:", { username });
-                event.reply("login-response", { success: false, error: "올바른 정보를 입력해주세요." });
+                event.reply("login-response", { success: false, error: "Invalid credentials" });
+            }
+        }
+    );
+
+    db.close();
+});
+ipcMain.on("logout", (event) => {
+    loggedInUser = null; // 로그인 정보 초기화
+    event.reply("logout-success");
+});
+ipcMain.on("fetch-logged-in-user", (event) => {
+    if (loggedInUser) {
+        event.reply("logged-in-user-response", loggedInUser);
+    } else {
+        event.reply("logged-in-user-response", null);
+    }
+});
+
+// 메인 페이지 이벤트 처리
+ipcMain.on("fetch-home-data", (event) => {
+    const db = new sqlite3.Database(dbPath);
+
+    // 회원 수 및 라커 정보 조회
+    db.get(
+        `SELECT 
+            (SELECT COUNT(*) FROM GOLF) AS member_count,
+            (SELECT COUNT(*) FROM LOCKER WHERE golf_id IS NOT NULL) AS occupied_lockers,
+            (SELECT COUNT(*) FROM LOCKER) AS total_lockers`,
+        (err, row) => {
+            if (err) {
+                console.error("Error fetching home data:", err.message);
+                event.reply("home-data-response", { error: err.message });
+            } else {
+                event.reply("home-data-response", {
+                    memberCount: row.member_count,
+                    occupiedLockers: row.occupied_lockers,
+                    totalLockers: row.total_lockers,
+                });
             }
         }
     );
@@ -78,7 +132,7 @@ ipcMain.on("login-attempt", (event, { username, password }) => {
 
 // 직원 관리 이벤트 처리
 ipcMain.on("fetch-managers", (event) => {
-    const db = new sqlite3.Database("./database/membership.db");
+    const db = new sqlite3.Database(dbPath);
 
     db.all("SELECT * FROM USER WHERE role IN ('ADMIN', 'USER')", (err, rows) => {
         if (err) {
@@ -92,24 +146,26 @@ ipcMain.on("fetch-managers", (event) => {
 
     db.close();
 });
-ipcMain.on("edit-manager", (event, { id, name, role, password }) => {
-    const db = new sqlite3.Database("./database/membership.db");
-    console.log(`Editing manager: ID=${id}, Name=${name}, Role=${role}`); // 로그 추가
+ipcMain.on("edit-manager", (event, { id, name, password }) => {
+    const db = new sqlite3.Database(dbPath);
+    console.log(`Editing manager: ID=${id}, Name=${name}`); // 로그 추가
     db.run(
-        "UPDATE USER SET name = ?, role = ?, irea_pw = ? WHERE user_id = ?",
-        [name, role, password, id],
+        "UPDATE USER SET name = ?, irea_pw = ? WHERE user_id = ?",
+        [name, password, id],
         (err) => {
             if (err) {
                 console.error("Edit manager error:", err.message);
+                event.reply("edit-manager-fail", err.message);
             } else {
-                event.reply("refresh-managers");
+                console.log(`Manager ID=${id} updated successfully.`);
+                event.reply("edit-manager-success");
             }
         }
     );
     db.close();
 });
 ipcMain.on("delete-manager", (event, id) => {
-    const db = new sqlite3.Database("./database/membership.db");
+    const db = new sqlite3.Database(dbPath);
     db.run("DELETE FROM USER WHERE user_id = ?", [id], (err) => {
         if (err) {
             console.error("Delete manager error:", err.message);
@@ -119,10 +175,31 @@ ipcMain.on("delete-manager", (event, id) => {
     });
     db.close();
 });
+ipcMain.on("add-manager", (event, { name, ireaId, password, role }) => {
+    const db = new sqlite3.Database(dbPath);
+
+    const query = `
+        INSERT INTO USER (irea_id, irea_pw, name, role)
+        VALUES (?, ?, ?, ?)
+    `;
+
+    db.run(query, [ireaId, password, name, role], (err) => {
+        if (err) {
+            console.error("Error adding manager:", err.message);
+            event.reply("add-manager-fail", err.message);
+        } else {
+            console.log("Manager added successfully.");
+            event.reply("add-manager-success");
+        }
+    });
+
+    db.close();
+});
+
 
 // 프로 관리 이벤트 처리
 ipcMain.on("fetch-pros", (event) => {
-    const db = new sqlite3.Database("./database/membership.db");
+    const db = new sqlite3.Database(dbPath);
 
     db.all("SELECT * FROM PRO", (err, rows) => {
         if (err) {
@@ -137,7 +214,7 @@ ipcMain.on("fetch-pros", (event) => {
     db.close();
 });
 ipcMain.on("add-pro", (event, { pro_name }) => {
-    const db = new sqlite3.Database("./database/membership.db");
+    const db = new sqlite3.Database(dbPath);
 
     db.run("INSERT INTO PRO (pro_name) VALUES (?)", [pro_name], (err) => {
         if (err) {
@@ -150,7 +227,7 @@ ipcMain.on("add-pro", (event, { pro_name }) => {
     db.close();
 });
 ipcMain.on("edit-pro", (event, { pro_id, pro_name }) => {
-    const db = new sqlite3.Database("./database/membership.db");
+    const db = new sqlite3.Database(dbPath);
 
     db.run("UPDATE PRO SET pro_name = ? WHERE pro_id = ?", [pro_name, pro_id], (err) => {
         if (err) {
@@ -163,7 +240,7 @@ ipcMain.on("edit-pro", (event, { pro_id, pro_name }) => {
     db.close();
 });
 ipcMain.on("delete-pro", (event, pro_id) => {
-    const db = new sqlite3.Database("./database/membership.db");
+    const db = new sqlite3.Database(dbPath);
 
     db.run("DELETE FROM PRO WHERE pro_id = ?", [pro_id], (err) => {
         if (err) {
@@ -181,7 +258,7 @@ ipcMain.on("delete-pro", (event, pro_id) => {
 ipcMain.on("add-golf-member", (event, data) => {
     console.log("Attempting to insert:", data);
 
-    const db = new sqlite3.Database("./database/membership.db");
+    const db = new sqlite3.Database(dbPath);
 
     db.run(
         `
@@ -218,7 +295,7 @@ ipcMain.on("add-golf-member", (event, data) => {
 
 // 회원 정보 확인 이벤트 처리
 ipcMain.on("fetch-golf-data", (event) => {
-    const db = new sqlite3.Database("./database/membership.db");
+    const db = new sqlite3.Database(dbPath);
 
     db.all(
         `
@@ -251,7 +328,7 @@ ipcMain.on("fetch-golf-data", (event) => {
     db.close();
 });
 ipcMain.on("delete-golf-member", (event, golfId) => {
-    const db = new sqlite3.Database("./database/membership.db");
+    const db = new sqlite3.Database(dbPath);
 
     db.run(
         "DELETE FROM GOLF WHERE golf_id = ?",
@@ -270,7 +347,7 @@ ipcMain.on("delete-golf-member", (event, golfId) => {
     db.close();
 });
 ipcMain.on("fetch-single-golf", (event, golfId) => {
-    const db = new sqlite3.Database("./database/membership.db");
+    const db = new sqlite3.Database(dbPath);
 
     db.get(
         `
@@ -306,7 +383,7 @@ ipcMain.on("fetch-single-golf", (event, golfId) => {
     db.close();
 });
 ipcMain.on("edit-golf-member", (event, member) => {
-    const db = new sqlite3.Database("./database/membership.db");
+    const db = new sqlite3.Database(dbPath);
 
     db.run(
         `
@@ -344,7 +421,7 @@ function calculateExpiryDate(startDate, months) {   // 등록기간에 따른 �
     return start.toISOString().split("T")[0];       // "YYYY-MM-DD" 형식 반환
 }
 ipcMain.on("fetch-filtered-golf-data", (event, filters) => {
-    const db = new sqlite3.Database("./database/membership.db");
+    const db = new sqlite3.Database(dbPath);
 
     let query = `
         SELECT 
@@ -398,7 +475,7 @@ ipcMain.on("fetch-filtered-golf-data", (event, filters) => {
 
 // 라커 관리 이벤트 처리
 ipcMain.on("search-golf-members", (event, query) => {
-    const db = new sqlite3.Database("./database/membership.db");
+    const db = new sqlite3.Database(dbPath);
 
     let sql = `
         SELECT golf_id, name, male, b_day, p_num
@@ -418,7 +495,7 @@ ipcMain.on("search-golf-members", (event, query) => {
     db.close();
 });
 ipcMain.on("register-locker", (event, lockerData) => {
-    const db = new sqlite3.Database("./database/membership.db");
+    const db = new sqlite3.Database(dbPath);
 
     db.run(
         `INSERT INTO LOCKER (l_num, golf_id, s_day, r_day, f_day, price, payment) 
@@ -446,7 +523,7 @@ ipcMain.on("register-locker", (event, lockerData) => {
     db.close();
 });
 ipcMain.on("fetch-locker-data", (event) => {
-    const db = new sqlite3.Database("./database/membership.db");
+    const db = new sqlite3.Database(dbPath);
 
     const query = `
         SELECT 
@@ -468,7 +545,7 @@ ipcMain.on("fetch-locker-data", (event) => {
     db.close();
 });
 ipcMain.on("check-locker-availability", (event, golfId) => {
-    const db = new sqlite3.Database("./database/membership.db");
+    const db = new sqlite3.Database(dbPath);
 
     const query = "SELECT 1 FROM LOCKER WHERE golf_id = ?";
     db.get(query, [golfId], (err, row) => {
@@ -482,4 +559,50 @@ ipcMain.on("check-locker-availability", (event, golfId) => {
 
     db.close();
 });
+ipcMain.on("extend-locker", (event, { locker_id, additionalMonths, additionalPrice }) => {
+    const db = new sqlite3.Database(dbPath);
+
+    const query = `
+        UPDATE LOCKER
+        SET r_day = r_day + ?, 
+            price = price + ?, 
+            f_day = DATE(f_day, ? || ' months')
+        WHERE l_num = ?
+    `;
+    db.run(
+        query,
+        [additionalMonths, additionalPrice, additionalMonths, locker_id],
+        (err) => {
+            if (err) {
+                console.error("Error extending locker:", err.message);
+                event.reply("extend-locker-fail");
+            } else {
+                console.log("Locker extended successfully.");
+                event.reply("extend-locker-success");
+            }
+        }
+    );
+
+    db.close();
+});
+ipcMain.on("delete-locker", (event, lockerNumber) => {
+    const db = new sqlite3.Database(dbPath);
+
+    db.run(
+        "DELETE FROM LOCKER WHERE l_num = ?",
+        [lockerNumber],
+        (err) => {
+            if (err) {
+                console.error("Error deleting locker:", err.message);
+                event.reply("delete-locker-fail");
+            } else {
+                console.log(`Locker ${lockerNumber} deleted successfully.`);
+                event.reply("delete-locker-success", lockerNumber);
+            }
+        }
+    );
+
+    db.close();
+});
+
 // ------------------------------------------------------------------------------

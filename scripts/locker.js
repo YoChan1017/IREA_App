@@ -63,8 +63,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // 라커 상세 정보 표시
     function showLockerDetails(locker) {
         dialogContainer.innerHTML = `
-            <div class="dialog-title">라커 상세 정보</div>
-            <p><strong>라커 번호:</strong> ${locker.l_num}</p>
+            <div class="dialog-title">▶ 라커 상세 정보 ◀</div>
+            <p><strong>라커 번호:</strong> ${locker.l_num}번</p>
             <p><strong>회원 이름:</strong> ${locker.name || "정보 없음"}</p>
             <p><strong>등록일:</strong> ${locker.s_day}</p>
             <p><strong>기간:</strong> ${locker.r_day}개월</p>
@@ -73,16 +73,132 @@ document.addEventListener("DOMContentLoaded", () => {
             <p><strong>가격:</strong> ${locker.price}원</p>
             <div class="dialog-buttons">
                 <button class="confirm">확인</button>
+                <button class="extend">연장</button>
+                <button class="delete">해제</button>
             </div>
         `;
         document.body.appendChild(dialogContainer);
         dialogContainer.classList.add("active");
 
+        // 확인 버튼
         document.querySelector(".confirm").addEventListener("click", () => {
             dialogContainer.classList.remove("active");
             dialogContainer.remove();
         });
+
+        // 연장 버튼
+        document.querySelector(".dialog-buttons .extend").addEventListener("click", () => {
+            showExtendDialog(locker); // 연장 다이얼로그 호출
+        });
+
+        // 삭제 버튼
+        document.querySelector(".dialog-buttons .delete").addEventListener("click", () => {
+            showDeleteConfirmation(locker.l_num); // 삭제 확인 다이얼로그 호출
+        });
     }
+    
+    // 연장 다이얼로그 생성 함수
+    function showExtendDialog(locker) {
+        dialogContainer.innerHTML = `
+            <div class="dialog-title">▶ 라커 연장 ◀</div>
+            <p><strong>연장 기간</strong>
+                <select id="extend-months" required>
+                    <option value="1">1개월</option>
+                    <option value="2">2개월</option>
+                    <option value="3">3개월</option>
+                    <option value="4">4개월</option>
+                    <option value="5">5개월</option>
+                    <option value="6">6개월</option>
+                    <option value="7">7개월</option>
+                    <option value="8">8개월</option>
+                    <option value="9">9개월</option>
+                    <option value="10">10개월</option>
+                    <option value="11">11개월</option>
+                    <option value="12">12개월</option>
+                </select>
+            </p>
+            <p><strong>추가 금액</strong>
+                <input class="dialog-input" type="number" id="extend-price" min="0" step="1000" required/>
+            </p>
+            <div class="dialog-buttons">
+                <button class="confirm">확인</button>
+                <button class="cancel">취소</button>
+            </div>
+        `;
+        document.body.appendChild(dialogContainer);
+        dialogContainer.classList.add("active");
+
+        // 확인 버튼 클릭
+        document.querySelector(".dialog-buttons .confirm").addEventListener("click", () => {
+            const extendMonths = parseInt(document.getElementById("extend-months").value);
+            const extendPrice = parseInt(document.getElementById("extend-price").value);
+
+            if (!extendMonths || !extendPrice) {
+                showDialog("추가 기간과 가격을 입력하세요.", false);
+                return;
+            }
+
+            ipcRenderer.send("extend-locker", {
+                locker_id: locker.l_num,
+                additionalMonths: extendMonths,
+                additionalPrice: extendPrice,
+            });
+
+            dialogContainer.classList.remove("active");
+            dialogContainer.remove();
+        });
+
+        // 취소 버튼 클릭
+        document.querySelector(".dialog-buttons .cancel").addEventListener("click", () => {
+            dialogContainer.classList.remove("active");
+            dialogContainer.remove();
+        });
+    }
+
+    ipcRenderer.on("extend-locker-success", () => {
+        showDialog("라커 연장이 성공적으로 완료되었습니다.", true);
+        loadLockerData(); // 갱신된 데이터를 다시 로드
+    });
+    
+    ipcRenderer.on("extend-locker-fail", () => {
+        showDialog("라커 연장에 실패했습니다. 다시 시도해주세요.", false);
+    });
+    
+    function showDeleteConfirmation(lockerNumber) {
+        dialogContainer.innerHTML = `
+            <div class="dialog-title">! 삭제 확인 !</div>
+            <p>정말 이 라커를 해제하시겠습니까?</p>
+            <div class="dialog-buttons">
+                <button class="confirm">확인</button>
+                <button class="cancel">취소</button>
+            </div>
+        `;
+        document.body.appendChild(dialogContainer);
+        dialogContainer.classList.add("active");
+    
+        // 확인 버튼 클릭
+        document.querySelector(".dialog-buttons .confirm").addEventListener("click", () => {
+            ipcRenderer.send("delete-locker", lockerNumber); // 서버에 삭제 요청
+            dialogContainer.classList.remove("active");
+            dialogContainer.remove();
+        });
+    
+        // 취소 버튼 클릭
+        document.querySelector(".dialog-buttons .cancel").addEventListener("click", () => {
+            dialogContainer.classList.remove("active");
+            dialogContainer.remove();
+        });
+    }
+
+    ipcRenderer.on("delete-locker-success", (event, lockerNumber) => {
+        showDialog(`라커 ${lockerNumber}이(가) 성공적으로 해제되었습니다.`, true);
+        loadLockerData(); // 데이터 갱신
+    });
+    
+    ipcRenderer.on("delete-locker-fail", () => {
+        showDialog("라커 삭제에 실패했습니다. 다시 시도해주세요.", false);
+    });
+    
 
     // 빈 라커 등록 모달 열기
     function openLockerModal(lockerNumber) {
@@ -179,7 +295,7 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
 
         if (!selectedMember) {
-            alert("회원 정보를 선택하세요.");
+            showDialog("회원 정보를 선택하세요.");
             return;
         }
 

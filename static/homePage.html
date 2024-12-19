@@ -6,13 +6,14 @@
   <title>HomePage</title>
   <link rel="stylesheet" href="./styles/home.css" />
   <script src="../scripts/home.js"></script>
+  <link rel="stylesheet" href="../dialog/dialog.css">
 </head>
 <body>
   <header>
     <nav>
       <button id="logoutButton">Log out</button>
-      <button onclick="location.href='managerPage.html'">직원 관리</button>
-      <button onclick="location.href='proPage.html'">프로 관리</button>
+      <button class="admin-only manager-btn" >직원 관리</button>
+      <button class="admin-only pro-btn" >프로 관리</button>
     </nav>
   </header>
   <section class="main-container">
@@ -20,7 +21,7 @@
       <p>IREA</p>
       <p>GOLF ACADEMY</p>
       <hr>
-      <span class="subtitle-right">Adjustment System</span>
+      <span class="subtitle-right">Membership Management Program</span>
     </div>
     <nav class="button-container">
       <button onclick="location.href='lockerPage.html'">라커 관리</button>
@@ -29,7 +30,9 @@
     </nav>
   </section>
   <section class="data-container">
-    <p>데이터</p>
+    <p>(현재 접속 중인 계정의 이름)님 환영합니다.</p>
+    <p>회원 수 : 0</p>
+    <p>등록된 라커 수 : 0/120</p>
   </section>
 </body>
 </html>

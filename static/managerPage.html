@@ -15,6 +15,7 @@
   </header>
   <section>
     <h3>직원관리</h3>
+    <div class="btn-container"><button title="직원 추가">+</button></div>
     <article class="styled-table">
       <div class="table-title">
         <div class="small">이름</div>
@@ -27,15 +28,18 @@
     </article>
   </section>
 
+  <!-- 수정용 -->
   <div id="managerDialog" class="dialog-container">
     <div class="dialog-title" id="dialogTitle"></div>
     <input type="text" id="dialogName" class="dialog-input" placeholder="이름 입력">
-    <input type="text" id="dialogRole" class="dialog-input" placeholder="권한 입력 (ADMIN 또는 USER)">
+    <input type="text" id="dialogId" class="dialog-input" placeholder="아이디 입력">
     <input type="password" id="dialogPassword" class="dialog-input" placeholder="비밀번호 입력">
+    <input type="text" id="dialogRole" class="dialog-input" value="USER" readonly>
     <div class="dialog-buttons">
         <button id="dialogConfirm" class="confirm">확인</button>
         <button id="dialogCancel" class="cancel">취소</button>
     </div>
   </div>
+  
 </body>
 </html>

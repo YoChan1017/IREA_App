@@ -2,15 +2,42 @@ const { ipcRenderer } = require("electron");
 
 document.addEventListener("DOMContentLoaded", () => {
     const tableContents = document.getElementById("table-contents");
+    const addButton = document.querySelector(".btn-container button");
     const managerDialog = document.getElementById("managerDialog");
     const dialogTitle = document.getElementById("dialogTitle");
     const dialogName = document.getElementById("dialogName");
+    const dialogId = document.getElementById("dialogId");
     const dialogRole = document.getElementById("dialogRole");
     const dialogPassword = document.getElementById("dialogPassword");
     const dialogConfirm = document.getElementById("dialogConfirm");
     const dialogCancel = document.getElementById("dialogCancel");
 
-    let currentAction = ""; // 'edit' or 'delete'
+    const notificationDialog = document.createElement("div");
+    notificationDialog.classList.add("dialog-container");
+    notificationDialog.innerHTML = `
+        <div class="dialog-title" id="notificationTitle"></div>
+        <p id="notificationMessage"></p>
+        <div class="dialog-buttons">
+            <button id="notificationClose" class="confirm">확인</button>
+        </div>
+    `;
+    document.body.appendChild(notificationDialog);
+
+    const notificationTitle = document.getElementById("notificationTitle");
+    const notificationMessage = document.getElementById("notificationMessage");
+    const notificationClose = document.getElementById("notificationClose");
+
+    notificationClose.addEventListener("click", () => {
+        notificationDialog.classList.remove("active");
+    });
+
+    function showNotification(title, message) {
+        notificationTitle.textContent = title;
+        notificationMessage.textContent = message;
+        notificationDialog.classList.add("active");
+    }
+
+    let currentAction = ""; // 'add', 'edit', or 'delete'
     let currentManagerId = null;
 
     // 페이지 로드 시 데이터 요청
@@ -18,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 서버에서 데이터 수신
     ipcRenderer.on("managers-data", (event, managers) => {
-        console.log("Managers data received:", managers); // 데이터 디버깅용
         renderManagers(managers);
     });
 
@@ -52,8 +78,13 @@ document.addEventListener("DOMContentLoaded", () => {
             button.addEventListener("click", (e) => {
                 currentAction = "edit";
                 currentManagerId = e.target.getAttribute("data-id");
-                dialogTitle.textContent = "직원 정보 수정";
+                dialogTitle.textContent = "▶ 직원 정보 수정 ◀";
                 managerDialog.classList.add("active");
+                const manager = managers.find(m => m.user_id == currentManagerId);
+                dialogName.value = manager.name;
+                dialogId.style.display = "none";
+                dialogRole.style.display = "none";
+                dialogPassword.value = "";
             });
         });
 
@@ -62,50 +93,90 @@ document.addEventListener("DOMContentLoaded", () => {
             button.addEventListener("click", (e) => {
                 currentAction = "delete";
                 currentManagerId = e.target.getAttribute("data-id");
-                dialogTitle.textContent = "직원 삭제 확인";
-                dialogName.style.display = "none";
-                dialogRole.style.display = "none";
-                dialogPassword.style.display = "none";
-                managerDialog.classList.add("active");
+                showNotification("삭제 확인", "정말 삭제하시겠습니까?");
+                notificationClose.addEventListener("click", () => {
+                    if (currentAction === "delete") {
+                        ipcRenderer.send("delete-manager", currentManagerId);
+                        currentAction = ""; // 이벤트 중복 방지
+                    }
+                }, { once: true });
             });
         });
     }
 
-    // 다이얼로그 확인 버튼 이벤트
-    dialogConfirm.addEventListener("click", () => {
-        const name = dialogName.value;
-        const role = dialogRole.value;
-        const password = dialogPassword.value;
-
-        if (currentAction === "edit") {
-            if (!name || !role || !password) {
-                alert("모든 필드를 채워야 합니다.");
-                return;
-            }
-            ipcRenderer.send("edit-manager", { id: currentManagerId, name, role, password });
-        } else if (currentAction === "delete") {
-            ipcRenderer.send("delete-manager", currentManagerId);
-        }
-
-        closeDialog();
+    // "직원 추가" 버튼 클릭 시 다이얼로그 열기
+    addButton.addEventListener("click", () => {
+        currentAction = "add";
+        dialogTitle.textContent = "▶ 직원 추가 ◀";
+        dialogName.value = "";
+        dialogId.value = "";
+        dialogId.style.display = "block";
+        dialogPassword.value = "";
+        dialogRole.value = "USER"; // 권한 고정
+        dialogRole.style.display = "block";
+        managerDialog.classList.add("active");
     });
 
-    // 다이얼로그 취소 버튼 이벤트
-    dialogCancel.addEventListener("click", closeDialog);
+    // "확인" 버튼 클릭 시 동작
+    dialogConfirm.addEventListener("click", () => {
+        const name = dialogName.value.trim();
+        const password = dialogPassword.value.trim();
 
-    // 다이얼로그 닫기 함수
-    function closeDialog() {
+        if (!name || (!password && currentAction === "edit")) {
+            showNotification("오류", "모든 필드를 입력하세요.");
+            return;
+        }
+
+        if (currentAction === "add") {
+            const ireaId = dialogId.value.trim();
+            if (!ireaId) {
+                showNotification("오류", "아이디를 입력하세요.");
+                return;
+            }
+            ipcRenderer.send("add-manager", { name, ireaId, password, role: "USER" });
+        } else if (currentAction === "edit") {
+            ipcRenderer.send("edit-manager", { id: currentManagerId, name, password });
+        }
+
         managerDialog.classList.remove("active");
-        dialogName.style.display = "block";
-        dialogRole.style.display = "block";
-        dialogPassword.style.display = "block";
-        dialogName.value = "";
-        dialogRole.value = "";
-        dialogPassword.value = "";
-    }
+    });
+
+    // "취소" 버튼 클릭 시 다이얼로그 닫기
+    dialogCancel.addEventListener("click", () => {
+        managerDialog.classList.remove("active");
+    });
 
     // 데이터 변경 시 새로고침
     ipcRenderer.on("refresh-managers", () => {
         ipcRenderer.send("fetch-managers");
+    });
+
+    // 추가 성공/실패 알림
+    ipcRenderer.on("add-manager-success", () => {
+        showNotification("성공", "직원이 성공적으로 추가되었습니다.");
+        ipcRenderer.send("fetch-managers"); // 직원 목록 갱신
+    });
+
+    ipcRenderer.on("add-manager-fail", (event, error) => {
+        showNotification("오류", `직원 추가에 실패했습니다: ${error}`);
+    });
+
+    ipcRenderer.on("edit-manager-success", () => {
+        showNotification("성공", "직원 정보가 성공적으로 수정되었습니다.");
+        ipcRenderer.send("fetch-managers");
+    });
+    
+    ipcRenderer.on("edit-manager-fail", (event, error) => {
+        showNotification("오류", `직원 정보 수정에 실패했습니다: ${error}`);
+    });    
+
+    // 삭제 성공/실패 알림
+    ipcRenderer.on("delete-manager-success", () => {
+        showNotification("성공", "직원이 성공적으로 삭제되었습니다.");
+        ipcRenderer.send("fetch-managers");
+    });
+
+    ipcRenderer.on("delete-manager-fail", (event, error) => {
+        showNotification("오류", `직원 삭제에 실패했습니다: ${error}`);
     });
 });

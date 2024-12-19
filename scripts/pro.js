@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 currentAction = "edit";
                 currentProId = proId;
-                dialogTitle.textContent = "프로 정보 수정";
+                dialogTitle.textContent = "▶ 프로 정보 수정 ◀";
                 dialogName.value = proName;
                 proDialog.classList.add("active");
             });
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 추가 버튼 클릭 이벤트
     addButton.addEventListener("click", () => {
         currentAction = "add";
-        dialogTitle.textContent = "프로 추가";
+        dialogTitle.textContent = "▶ 프로 추가 ◀";
         dialogName.value = "";
         proDialog.classList.add("active");
     });

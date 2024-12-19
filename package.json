@@ -1,11 +1,55 @@
 {
+    "name": "ireagolf",
+    "version": "1.0.0",
+    "description": "BETA TEST IREA app",
+    "author": "U_chan <chanii1017@naver.com>",
     "main": "main.js",
     "scripts": {
-        "start": "electron ."
+        "start": "electron .",
+        "build": "electron-builder"
+    },
+    "build": {
+        "appId": "com.irea.golf",
+        "productName": "IREAGOLF",
+        "directories": {
+            "output": "dist"
+        },
+        "files": [
+            "main.js",
+            "loginPage.html",
+            "static/",
+            "database/",
+            "scripts/",
+            "Dialog/"
+        ],
+        "win": {
+            "icon": "static/icons/app-icon.ico",
+            "target": "nsis",
+            "signAndEditExecutable": false
+        },
+        "mac": {
+            "icon": "static/icons/app-icon.icns"
+        },
+        "linux": {
+            "icon": "static/icons/app-icons.png"
+        },
+        "nsis": {
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true,
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": false,
+            "runAfterFinish": false,
+            "shortcutName": "IREAGOLF"
+        }
     },
     "dependencies": {
-        "electron": "^33.2.1",
         "iconv-lite": "^0.6.3",
         "sqlite3": "^5.1.7"
+    },
+    "devDependencies": {
+        "7zip-bin": "^5.2.0",
+        "electron": "^33.2.1",
+        "electron-builder": "^25.1.8",
+        "electron-packager": "^17.1.2"
     }
 }
