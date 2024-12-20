@@ -82,6 +82,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const tableContents = document.querySelector("#table-contents");
     const managerDropdown = document.getElementById("manager");
 
+    let loggedInUserId = null;
+    let loggedInUserRole = null;
+
+    // 로그인된 사용자 정보 요청
+    ipcRenderer.send("fetch-logged-in-user");
+
+    ipcRenderer.on("logged-in-user-response", (event, user) => {
+        if (user) {
+            loggedInUserId = user.id;
+            loggedInUserRole = user.role; // 권한 정보 저장
+        }
+    });
+
     // GOLF 데이터 로드 함수
     function loadGolfData() {
         ipcRenderer.send("fetch-golf-data");
@@ -140,6 +153,14 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("click", (e) => {
         if (e.target.classList.contains("edit-btn")) {
             const golfId = e.target.dataset.id;
+
+            // 권한 확인
+            if (loggedInUserRole !== "ADMIN") {
+                showNotification("수정 불가", "관리자만 수정할 수 있습니다.");
+                return;
+            }
+
+            // 수정 다이얼로그 표시
             ipcRenderer.send("fetch-single-golf", golfId);
         }
     });
@@ -196,6 +217,14 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("click", (e) => {
         if (e.target.classList.contains("delete-btn")) {
             const golfId = e.target.dataset.id;
+
+            // 권한 확인
+            if (loggedInUserRole !== "ADMIN") {
+                showNotification("삭제 불가", "관리자만 삭제할 수 있습니다.");
+                return;
+            }
+
+            // 삭제 확인 다이얼로그 표시
             const deleteDialog = document.getElementById("deleteDialog");
             deleteDialog.dataset.id = golfId;
             deleteDialog.classList.add("active");
@@ -218,15 +247,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 삭제 성공 응답 처리
     ipcRenderer.on("golf-delete-success", (event, golfId) => {
-        console.log(`Successfully deleted member with ID: ${golfId}`);
-        loadGolfData();
-    });
+        console.log(`Successfully deleted GOLF member with ID: ${golfId}`);
+        loadGolfData(); // GOLF 데이터만 새로 로드
+    });    
 
     // 삭제 실패 응답 처리
     ipcRenderer.on("golf-delete-error", (event, error) => {
         console.error("Error deleting member:", error);
-        alert("회원 삭제 중 오류가 발생했습니다.");
+        showDialog("회원 삭제 중 오류가 발생했습니다.");
     });
+
+    function showNotification(title, message) {
+        const notificationDialog = document.createElement("div");
+        notificationDialog.classList.add("dialog-container", "active");
+        notificationDialog.innerHTML = `
+            <div class="dialog-title">${title}</div>
+            <p>${message}</p>
+            <div class="dialog-buttons">
+                <button class="confirm" onclick="this.parentElement.parentElement.classList.remove('active')">확인</button>
+            </div>
+        `;
+        document.body.appendChild(notificationDialog);
+    }    
 
     // 초기 데이터 로드
     loadGolfData();

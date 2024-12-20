@@ -16,6 +16,19 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentProId = null; // 수정할 프로 ID
     let proIdToDelete = null; // 삭제할 프로 ID
 
+    function showAlert(message) {
+        const alertDialog = document.createElement("div");
+        alertDialog.classList.add("dialog-container", "active");
+        alertDialog.innerHTML = `
+            <div class="dialog-title">알림</div>
+            <p>${message}</p>
+            <div class="dialog-buttons">
+                <button class="confirm" onclick="this.parentElement.parentElement.classList.remove('active')">확인</button>
+            </div>
+        `;
+        document.body.appendChild(alertDialog);
+    }    
+
     // 데이터 렌더링 함수
     function renderPros(pros) {
         tableContents.innerHTML = "";
@@ -42,8 +55,12 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll(".edit-btn").forEach(button => {
             button.addEventListener("click", (e) => {
                 const proId = e.target.getAttribute("data-id");
-                const proName = e.target.parentElement.previousElementSibling.textContent;
+                if (proId === "1") {
+                    showAlert("해당 데이터는 수정할 수 없습니다.");
+                    return;
+                }
 
+                const proName = e.target.parentElement.previousElementSibling.textContent;
                 currentAction = "edit";
                 currentProId = proId;
                 dialogTitle.textContent = "▶ 프로 정보 수정 ◀";
@@ -55,10 +72,17 @@ document.addEventListener("DOMContentLoaded", () => {
         // 삭제 버튼 이벤트 연결
         document.querySelectorAll(".delete-btn").forEach(button => {
             button.addEventListener("click", (e) => {
-                proIdToDelete = e.target.getAttribute("data-id"); // 삭제할 ID 저장
-                deleteDialog.classList.add("active"); // 삭제 다이얼로그 표시
+                const proId = e.target.getAttribute("data-id");
+                if (proId === "1") {
+                    showAlert("해당 데이터는 삭제할 수 없습니다.");
+                    return;
+                }
+
+                proIdToDelete = proId;
+                deleteDialog.classList.add("active");
             });
         });
+
     }
 
     // 데이터 요청 및 초기 렌더링
@@ -78,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const proName = dialogName.value.trim();
 
         if (!proName) {
-            alert("프로 이름을 입력하세요.");
+            showAlert("프로 이름을 입력하세요.");
             return;
         }
 

@@ -76,6 +76,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    ipcRenderer.on("member-added-duplicate", (event, data) => {
+        const genderText = data.gender === "male" ? "남성" : "여성";
+        showAlert(`이미 등록된 회원입니다: ${data.name} (${data.birthDate}, ${genderText})`);
+    });    
+
     // 등록 성공 알림
     ipcRenderer.on("member-added", () => {
         const successDialog = document.getElementById("successDialog");

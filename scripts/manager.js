@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <p id="notificationMessage"></p>
         <div class="dialog-buttons">
             <button id="notificationClose" class="confirm">확인</button>
+            <button id="notificationCancel" class="cancel">취소</button>
         </div>
     `;
     document.body.appendChild(notificationDialog);
@@ -76,32 +77,57 @@ document.addEventListener("DOMContentLoaded", () => {
         // 수정 버튼 이벤트 연결
         document.querySelectorAll(".edit-btn").forEach(button => {
             button.addEventListener("click", (e) => {
+                const userId = e.target.getAttribute("data-id");
                 currentAction = "edit";
-                currentManagerId = e.target.getAttribute("data-id");
+                currentManagerId = userId;
+                const manager = managers.find(m => m.user_id == userId);
+        
                 dialogTitle.textContent = "▶ 직원 정보 수정 ◀";
                 managerDialog.classList.add("active");
-                const manager = managers.find(m => m.user_id == currentManagerId);
+        
                 dialogName.value = manager.name;
-                dialogId.style.display = "none";
-                dialogRole.style.display = "none";
                 dialogPassword.value = "";
+        
+                if (userId === "1") {
+                    dialogId.style.display = "none"; // ID 수정 비활성화
+                    dialogRole.style.display = "none"; // 역할 수정 비활성화
+                } else {
+                    dialogId.style.display = "block";
+                    dialogRole.style.display = "block";
+                }
             });
         });
+        
 
         // 삭제 버튼 이벤트 연결
         document.querySelectorAll(".delete-btn").forEach(button => {
             button.addEventListener("click", (e) => {
+                const userId = e.target.getAttribute("data-id");
+                if (userId === "1") {
+                    showNotification("삭제 불가", "관리자 데이터는 삭제할 수 없습니다.");
+                    return;
+                }
+        
                 currentAction = "delete";
-                currentManagerId = e.target.getAttribute("data-id");
+                currentManagerId = userId;
                 showNotification("삭제 확인", "정말 삭제하시겠습니까?");
+        
+                // "확인" 버튼 클릭 시 삭제 실행
                 notificationClose.addEventListener("click", () => {
                     if (currentAction === "delete") {
                         ipcRenderer.send("delete-manager", currentManagerId);
                         currentAction = ""; // 이벤트 중복 방지
                     }
+                    notificationDialog.classList.remove("active");
+                }, { once: true });
+        
+                // "취소" 버튼 클릭 시 다이얼로그 닫기
+                notificationCancel.addEventListener("click", () => {
+                    currentAction = ""; // 삭제 취소
+                    notificationDialog.classList.remove("active");
                 }, { once: true });
             });
-        });
+        });        
     }
 
     // "직원 추가" 버튼 클릭 시 다이얼로그 열기

@@ -39,7 +39,9 @@
             "createDesktopShortcut": true,
             "createStartMenuShortcut": false,
             "runAfterFinish": false,
-            "shortcutName": "IREAGOLF"
+            "shortcutName": "IREAGOLF",
+            "installerIcon": "static/icons/app-icon.ico",
+            "uninstallerIcon": "static/icons/app-icon.ico"
         }
     },
     "dependencies": {

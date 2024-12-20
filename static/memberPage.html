@@ -6,7 +6,8 @@
   <title>MemberPage</title>
   <link rel="stylesheet" href="./styles/member.css" />
   <script defer src="../scripts/member.js"></script>
-  <link rel="stylesheet" href="../dialog/dialog.css">
+  <script src="../scripts/common.js"></script>
+  <link rel="stylesheet" href="../Dialog/dialog.css">
 </head>
 <body>
   <header>
@@ -37,8 +38,16 @@
           <select id="months" name="months">
             <option disabled hidden selected>등록기간</option>
             <option value="1">1개월</option>
+            <option value="2">2개월</option>
             <option value="3">3개월</option>
+            <option value="4">4개월</option>
+            <option value="5">5개월</option>
             <option value="6">6개월</option>
+            <option value="7">7개월</option>
+            <option value="8">8개월</option>
+            <option value="9">9개월</option>
+            <option value="10">10개월</option>
+            <option value="11">11개월</option>
             <option value="12">12개월</option>
             <option value="date-other">기타</option>
           </select>
@@ -92,7 +101,7 @@
   <!-- 삭제 다이얼로그 -->
   <div id="deleteDialog" class="dialog-container">
     <div class="dialog-title">! 삭제 확인 !</div>
-    <p>정말 이 라커를 해제하시겠습니까?</p>
+    <p>정말 이 회원를 삭제하시겠습니까?</p>
     <div class="dialog-buttons">
         <button id="deleteConfirm" class="confirm">확인</button>
         <button id="deleteCancel" class="cancel">취소</button>

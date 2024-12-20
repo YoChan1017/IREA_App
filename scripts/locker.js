@@ -13,6 +13,15 @@ document.addEventListener("DOMContentLoaded", () => {
     let selectedLocker = null;
     let selectedMember = null;
 
+    let loggedInUserRole = null;
+
+    // 로그인된 사용자 권한 확인
+    ipcRenderer.send("check-user-role");
+
+    ipcRenderer.on("user-role-response", (event, response) => {
+        loggedInUserRole = response.role;
+    });
+
     // 라커 데이터 로드
     function loadLockerData() {
         ipcRenderer.send("fetch-locker-data");
@@ -99,6 +108,11 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // 연장 다이얼로그 생성 함수
     function showExtendDialog(locker) {
+        if (loggedInUserRole !== "ADMIN") {
+            showDialog("관리자만 라커를 연장할 수 있습니다.", false);
+            return;
+        }
+
         dialogContainer.innerHTML = `
             <div class="dialog-title">▶ 라커 연장 ◀</div>
             <p><strong>연장 기간</strong>
@@ -164,7 +178,13 @@ document.addEventListener("DOMContentLoaded", () => {
         showDialog("라커 연장에 실패했습니다. 다시 시도해주세요.", false);
     });
     
+    // 라커 해제
     function showDeleteConfirmation(lockerNumber) {
+        if (loggedInUserRole !== "ADMIN") {
+            showDialog("관리자만 라커를 해제할 수 있습니다.", false);
+            return;
+        }
+
         dialogContainer.innerHTML = `
             <div class="dialog-title">! 삭제 확인 !</div>
             <p>정말 이 라커를 해제하시겠습니까?</p>
@@ -191,9 +211,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     ipcRenderer.on("delete-locker-success", (event, lockerNumber) => {
-        showDialog(`라커 ${lockerNumber}이(가) 성공적으로 해제되었습니다.`, true);
-        loadLockerData(); // 데이터 갱신
+        if (lockerNumber) { // LOCKER와 관련된 삭제만 처리
+            console.log(`Locker ${lockerNumber} deleted successfully.`);
+            showDialog(`라커 ${lockerNumber}번이 성공적으로 해제되었습니다.`, true);
+            loadLockerData();
+        }
     });
+       
     
     ipcRenderer.on("delete-locker-fail", () => {
         showDialog("라커 삭제에 실패했습니다. 다시 시도해주세요.", false);
@@ -326,6 +350,24 @@ document.addEventListener("DOMContentLoaded", () => {
     function showDialog(message, isSuccess) {
         dialogContainer.innerHTML = `
             <div class="dialog-title">${isSuccess ? "성공" : "실패"}</div>
+            <p>${message}</p>
+            <div class="dialog-buttons">
+                <button class="confirm">확인</button>
+            </div>
+        `;
+    
+        document.body.appendChild(dialogContainer);
+        dialogContainer.classList.add("active");
+    
+        document.querySelector(".confirm").addEventListener("click", () => {
+            dialogContainer.classList.remove("active");
+            dialogContainer.remove();
+        });
+    }    
+
+    function showDialog(message, isSuccess) {
+        dialogContainer.innerHTML = `
+            <div class="dialog-title">${isSuccess ? "성공" : "권한 없음"}</div>
             <p>${message}</p>
             <div class="dialog-buttons">
                 <button class="confirm">확인</button>

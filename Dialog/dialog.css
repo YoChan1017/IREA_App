@@ -4,15 +4,16 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: white;
-    color: black; /* 텍스트 색상을 검정색으로 설정 */
+    background: rgba(255, 255, 255, 0.8); /* 반투명 흰색 배경 */
+    color: #003128; /* 텍스트 색상을 다른 페이지와 맞춤 */
     padding: 20px;
-    border: 1px solid #ddd;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+    border: 1px solid #fff; /* 흰색 테두리 */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* 더 뚜렷한 그림자 */
+    border-radius: 12px; /* 모서리 둥글게 */
     z-index: 1000;
     max-width: 400px;
     text-align: center;
+    font-family: 'Pretendard-M'; /* 통일된 글꼴 */
 }
 
 .dialog-container.active {
@@ -22,36 +23,49 @@
 .dialog-title {
     font-size: 18px;
     margin-bottom: 15px;
-    color: black; /* 텍스트 색상을 검정색으로 설정 */
+    color: #003128; /* 텍스트 색상 일치 */
+    font-family: 'Pretendard-B'; /* 굵은 글꼴 */
 }
 
 .dialog-input {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     width: 90%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    color: black; /* 텍스트 색상을 검정색으로 설정 */
+    padding: 10px;
+    border: 1px solid #fff; /* 테두리 흰색 */
+    border-radius: 8px;
+    color: #003128; /* 텍스트 색상 일치 */
+    background-color: rgba(255, 255, 255, 0.6); /* 반투명 흰색 배경 */
+    font-family: 'Pretendard-R';
 }
 
 .dialog-buttons {
-    margin-top: 15px;
+    margin-top: 20px;
 }
 
 .dialog-buttons button {
     margin: 0 10px;
     padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
+    border: 1px solid #fff; /* 테두리 흰색 */
+    border-radius: 8px;
     cursor: pointer;
-    color: black; /* 텍스트 색상을 검정색으로 설정 */
+    font-family: 'Pretendard-M';
+    font-size: 14px;
 }
 
 .dialog-buttons .confirm {
-    background-color: #007bff;
+    background-color: #22a497; /* 일관된 버튼 배경색 */
     color: white;
 }
 
+.dialog-buttons .confirm:hover {
+    background-color: #1b8577; /* hover 효과 */
+}
+
 .dialog-buttons .cancel {
-    background-color: #ccc;
+    background-color: rgba(255, 255, 255, 0.6); /* 반투명 흰색 */
+    color: #003128; /* 텍스트 색상 */
+}
+
+.dialog-buttons .cancel:hover {
+    background-color: rgba(255, 255, 255, 0.8); /* hover 효과 */
 }

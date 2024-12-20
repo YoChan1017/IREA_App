@@ -42,7 +42,7 @@ function createWindow() {
     });
 
     console.log('Current directory:', __dirname);
-    console.log('Icon path:', path.join(__dirname, 'static/icons/app-icon.ico'));
+    console.log('Icon path:', path.join(__dirname, 'icons/app-icon.ico'));
     
     // 초기 페이지: 로그인 페이지
     mainWindow.loadFile(path.join(__dirname, "static/loginPage.html"));
@@ -100,6 +100,13 @@ ipcMain.on("fetch-logged-in-user", (event) => {
         event.reply("logged-in-user-response", loggedInUser);
     } else {
         event.reply("logged-in-user-response", null);
+    }
+});
+ipcMain.on("check-login", (event) => {
+    if (loggedInUser) {
+        event.reply("login-check-response", { loggedIn: true });
+    } else {
+        event.reply("login-check-response", { loggedIn: false });
     }
 });
 
@@ -260,32 +267,50 @@ ipcMain.on("add-golf-member", (event, data) => {
 
     const db = new sqlite3.Database(dbPath);
 
-    db.run(
-        `
-        INSERT INTO GOLF (
-            name, male, b_day, p_num, s_day, r_day, f_day, lesson, pro_id, payment, price
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `,
-        [
-            data.name,
-            data.gender === "male" ? "M" : "F",
-            data.birthDate,
-            data.phone,
-            data.startDate,
-            data.months,
-            data.expiryDate,
-            data.lesson ? "Y" : "N",
-            data.proId,
-            data.payment,
-            data.price,
-        ],
-        (err) => {
+    // 중복 검사: 이름, 생일, 성별
+    db.get(
+        `SELECT * FROM GOLF WHERE name = ? AND b_day = ? AND male = ?`,
+        [data.name, data.birthDate, data.gender === "male" ? "M" : "F"],
+        (err, row) => {
             if (err) {
                 console.error("SQL Error:", err.message);
                 event.reply("member-added-error", err.message);
+            } else if (row) {
+                console.log("Duplicate member found:", row);
+                event.reply("member-added-duplicate", {
+                    name: data.name,
+                    birthDate: data.birthDate,
+                    gender: data.gender,
+                });
             } else {
-                console.log("Insertion successful for:", data.name);
-                event.reply("member-added");
+                // 중복되지 않은 경우 추가
+                db.run(
+                    `INSERT INTO GOLF (
+                        name, male, b_day, p_num, s_day, r_day, f_day, lesson, pro_id, payment, price
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                    [
+                        data.name,
+                        data.gender === "male" ? "M" : "F",
+                        data.birthDate,
+                        data.phone,
+                        data.startDate,
+                        data.months,
+                        data.expiryDate,
+                        data.lesson ? "Y" : "N",
+                        data.proId,
+                        data.payment,
+                        data.price,
+                    ],
+                    (err) => {
+                        if (err) {
+                            console.error("SQL Error:", err.message);
+                            event.reply("member-added-error", err.message);
+                        } else {
+                            console.log("Insertion successful for:", data.name);
+                            event.reply("member-added");
+                        }
+                    }
+                );
             }
         }
     );
@@ -330,16 +355,24 @@ ipcMain.on("fetch-golf-data", (event) => {
 ipcMain.on("delete-golf-member", (event, golfId) => {
     const db = new sqlite3.Database(dbPath);
 
+    // 외래 키 활성화
+    db.run("PRAGMA foreign_keys = ON", (err) => {
+        if (err) {
+            console.error("Failed to enable foreign keys:", err.message);
+        }
+    });
+
+    // GOLF 데이터 삭제
     db.run(
         "DELETE FROM GOLF WHERE golf_id = ?",
         [golfId],
-        (err) => {
+        function (err) {
             if (err) {
                 console.error("Error deleting GOLF member:", err.message);
-                event.reply("golf-delete-error", err.message); // 삭제 실패 시 응답
+                event.reply("golf-delete-error", err.message);
             } else {
-                console.log("Deleted GOLF member with ID:", golfId);
-                event.reply("golf-delete-success", golfId); // 삭제 성공 시 응답
+                console.log(`Deleted GOLF member with ID: ${golfId}`);
+                event.reply("golf-delete-success", golfId); // GOLF 삭제만 응답
             }
         }
     );

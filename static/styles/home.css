@@ -94,4 +94,5 @@ header {
   background-color: #a6b0ad36;
   margin: auto;
   color: #fff;
+  text-align: center; /* 텍스트를 중앙 정렬 */
 }

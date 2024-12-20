@@ -1,5 +1,8 @@
 Electron_APP_Test
 
+Download
+> npm install
+
 START
 > npm start run
 

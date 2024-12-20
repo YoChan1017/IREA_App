@@ -61,8 +61,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (user) {
             dataContainer.innerHTML = `
                 <p>${user.name}님 환영합니다.</p>
-                <p>회원 수: 데이터 로딩 중...</p>
+                <hr>
+                <p>등록된 회원 수: 데이터 로딩 중...</p>
                 <p>등록된 라커 수: 데이터 로딩 중...</p>
+                <hr>
+                <p>% 업데이트 예정 %</p>
+                <p>만료된 회원 수 : 0 (deletebutton)</p>
+                <p>만료된 라커 수 : 0 (deletebutton)</p>
             `;
 
             // 회원 및 라커 데이터 요청
@@ -73,13 +78,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.error("Error fetching home data:", data.error);
                     dataContainer.innerHTML = `
                         <p>${user.name}님 환영합니다.</p>
+                        <hr>
+                        <p>데이터를 불러오는 중 오류가 발생했습니다.</p>
+                        <hr>
                         <p>데이터를 불러오는 중 오류가 발생했습니다.</p>
                     `;
                 } else {
                     dataContainer.innerHTML = `
                         <p>${user.name}님 환영합니다.</p>
-                        <p>회원 수: ${data.memberCount} 명</p>
+                        <hr>
+                        <p>등록된 회원 수: ${data.memberCount} 명</p>
                         <p>등록된 라커 수: ${data.occupiedLockers} / 120</p>
+                        <hr>
+                        <p>% 업데이트 예정 %</p>
+                        <p>만료된 회원 수 : 0 (deletebutton)</p>
+                        <p>만료된 라커 수 : 0 (deletebutton)</p>
                     `;
                 }
             });
