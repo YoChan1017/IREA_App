@@ -16,10 +16,13 @@ document.addEventListener("DOMContentLoaded", () => {
     let loggedInUserRole = null;
 
     // 로그인된 사용자 권한 확인
-    ipcRenderer.send("check-user-role");
+    ipcRenderer.send("fetch-logged-in-user");
 
-    ipcRenderer.on("user-role-response", (event, response) => {
-        loggedInUserRole = response.role;
+    ipcRenderer.on("logged-in-user-response", (event, user) => {
+        if (user) {
+            loggedInUserId = user.id;
+            loggedInUserRole = user.role; // 권한 정보 저장
+        }
     });
 
     // 라커 데이터 로드

@@ -1,6 +1,6 @@
-const { app, BrowserWindow, ipcMain } = require("electron");    // Electron
-const sqlite3 = require("sqlite3").verbose();                   // SQLite3
-const iconv = require("iconv-lite");                            // iconv-lite
+const { app, BrowserWindow, ipcMain, dialog } = require("electron");    // Electron
+const sqlite3 = require("sqlite3").verbose();                           // SQLite3
+const iconv = require("iconv-lite");                                    // iconv-lite
 
 const fs = require("fs");
 const path = require('path');
@@ -114,12 +114,14 @@ ipcMain.on("check-login", (event) => {
 ipcMain.on("fetch-home-data", (event) => {
     const db = new sqlite3.Database(dbPath);
 
-    // 회원 수 및 라커 정보 조회
     db.get(
         `SELECT 
             (SELECT COUNT(*) FROM GOLF) AS member_count,
             (SELECT COUNT(*) FROM LOCKER WHERE golf_id IS NOT NULL) AS occupied_lockers,
-            (SELECT COUNT(*) FROM LOCKER) AS total_lockers`,
+            (SELECT COUNT(*) FROM LOCKER) AS total_lockers,
+            (SELECT COUNT(*) FROM GOLF WHERE f_day < DATE('now')) AS expired_members,
+            (SELECT COUNT(*) FROM LOCKER WHERE f_day < DATE('now')) AS expired_lockers
+        `,
         (err, row) => {
             if (err) {
                 console.error("Error fetching home data:", err.message);
@@ -129,6 +131,8 @@ ipcMain.on("fetch-home-data", (event) => {
                     memberCount: row.member_count,
                     occupiedLockers: row.occupied_lockers,
                     totalLockers: row.total_lockers,
+                    expiredMembers: row.expired_members,
+                    expiredLockers: row.expired_lockers,
                 });
             }
         }
@@ -502,6 +506,79 @@ ipcMain.on("fetch-filtered-golf-data", (event, filters) => {
             event.reply("filtered-golf-data-response", rows);
         }
     });
+
+    db.close();
+});
+ipcMain.on("download-csv", async (event) => {
+    const db = new sqlite3.Database(dbPath);
+
+    const { canceled, filePath } = await dialog.showSaveDialog({
+        title: "CSV 파일 저장",
+        defaultPath: "golf_members.csv",
+        filters: [{ name: "CSV Files", extensions: ["csv"] }],
+    });
+
+    if (canceled) {
+        event.reply("csv-download-cancel", "저장이 취소되었습니다.");
+        return;
+    }
+
+    db.all(
+        `SELECT GOLF.golf_id, GOLF.name, GOLF.male, GOLF.b_day, GOLF.p_num,
+                GOLF.s_day, GOLF.r_day, GOLF.f_day, GOLF.payment, GOLF.price, PRO.pro_name
+         FROM GOLF
+         LEFT JOIN PRO ON GOLF.pro_id = PRO.pro_id`,
+        [],
+        (err, rows) => {
+            if (err) {
+                event.reply("csv-download-error", "데이터를 가져오는 데 실패했습니다.");
+                return;
+            }
+
+            const csvRows = [
+                "ID,이름,성별,생년월일,전화번호,시작일,등록기간(개월),만료일,결제정보,가격,프로정보",
+            ];
+
+            const formatDate = (date) => {
+                const d = new Date(date);
+                return isNaN(d.getTime()) ? "알 수 없음" : d.toISOString().split("T")[0];
+            };
+
+            rows.forEach((row) => {
+                const paymentType = {
+                    A: "카드",
+                    B: "현금",
+                    C: "기타"
+                }[row.payment] || "알 수 없음";
+
+                csvRows.push(
+                    [
+                        `"${row.golf_id}"`,
+                        `"${row.name}"`,
+                        `"${row.male === "M" ? "남자" : "여자"}"`,
+                        `"${formatDate(row.b_day)}"`,
+                        `"${row.p_num}"`,
+                        `"${formatDate(row.s_day)}"`,
+                        `"${row.r_day}"`,
+                        `"${formatDate(row.f_day)}"`,
+                        `"${paymentType}"`,
+                        `"${row.price}"`,
+                        `"${row.pro_name || "X"}"`,
+                    ].join(",")
+                );
+            });
+
+            const csvContent = "\uFEFF" + csvRows.join("\n");
+
+            fs.writeFile(filePath, csvContent, (writeErr) => {
+                if (writeErr) {
+                    event.reply("csv-download-error", "CSV 파일을 생성하는 데 실패했습니다.");
+                } else {
+                    event.reply("csv-download-success", filePath);
+                }
+            });
+        }
+    );
 
     db.close();
 });

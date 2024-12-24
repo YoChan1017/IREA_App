@@ -73,6 +73,36 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    document.getElementById("downloadCsv").addEventListener("click", () => {
+        ipcRenderer.send("download-csv");
+    });
+    
+    ipcRenderer.on("csv-download-success", (event, filePath) => {
+        showDialog(`CSV 파일이 저장되었습니다: ${filePath}`, true);
+    });
+    
+    ipcRenderer.on("csv-download-error", (event, message) => {
+        showDialog(`CSV 다운로드 중 오류 발생: ${message}`, false);
+    });
+    
+    ipcRenderer.on("csv-download-cancel", (event, message) => {
+        showDialog(message, false);
+    });
+    
+    // 다이얼로그 생성 함수
+    function showDialog(message, isSuccess) {
+        const dialog = document.createElement("div");
+        dialog.className = "dialog-container active";
+        dialog.innerHTML = `
+            <div class="dialog-title">${isSuccess ? "성공" : "오류"}</div>
+            <p>${message}</p>
+            <div class="dialog-buttons">
+                <button class="confirm" onclick="this.parentElement.parentElement.classList.remove('active')">확인</button>
+            </div>
+        `;
+        document.body.appendChild(dialog);
+    }    
+
     loadGolfData();
 });
 

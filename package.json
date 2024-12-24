@@ -25,10 +25,18 @@
         "win": {
             "icon": "static/icons/app-icon.ico",
             "target": "nsis",
-            "signAndEditExecutable": false
+            "signAndEditExecutable": true,
+            "signtoolOptions": {
+                "certificateFile": "C:\\irea-app-cert.pfx",
+                "certificatePassword": "1q2w3e"
+            }
         },
         "mac": {
-            "icon": "static/icons/app-icon.icns"
+            "icon": "static/icons/app-icon.icns",
+            "target": [
+                "dmg",
+                "zip"
+            ]
         },
         "linux": {
             "icon": "static/icons/app-icons.png"
@@ -49,9 +57,12 @@
         "sqlite3": "^5.1.7"
     },
     "devDependencies": {
+        "@electron/universal": "^2.0.1",
         "7zip-bin": "^5.2.0",
         "electron": "^33.2.1",
+        "electron-build-service": "^1.0.7",
         "electron-builder": "^25.1.8",
-        "electron-packager": "^17.1.2"
+        "electron-packager": "^17.1.2",
+        "vite": "^6.0.5"
     }
 }

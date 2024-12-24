@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const notificationDialog = document.createElement("div");
     notificationDialog.classList.add("dialog-container");
     notificationDialog.innerHTML = `
-        <div class="dialog-title">! 권한 없음 !</div>
+        <div class="dialog-title">권한 없음</div>
         <p>이 페이지에 접근할 권한이 없습니다.</p>
         <div class="dialog-buttons">
             <button id="notificationClose" class="confirm">확인</button>
@@ -66,8 +66,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p>등록된 라커 수: 데이터 로딩 중...</p>
                 <hr>
                 <p>% 업데이트 예정 %</p>
-                <p>만료된 회원 수 : 0 (deletebutton)</p>
-                <p>만료된 라커 수 : 0 (deletebutton)</p>
+                <p>만료된 회원 수 : 데이터 로딩 중...</p>
+                <p>만료된 라커 수 : 데이터 로딩 중...</p>
             `;
 
             // 회원 및 라커 데이터 요청
@@ -80,7 +80,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         <p>${user.name}님 환영합니다.</p>
                         <hr>
                         <p>데이터를 불러오는 중 오류가 발생했습니다.</p>
+                        <p>데이터를 불러오는 중 오류가 발생했습니다.</p>
                         <hr>
+                        <p>데이터를 불러오는 중 오류가 발생했습니다.</p>
                         <p>데이터를 불러오는 중 오류가 발생했습니다.</p>
                     `;
                 } else {
@@ -90,9 +92,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         <p>등록된 회원 수: ${data.memberCount} 명</p>
                         <p>등록된 라커 수: ${data.occupiedLockers} / 120</p>
                         <hr>
-                        <p>% 업데이트 예정 %</p>
-                        <p>만료된 회원 수 : 0 (deletebutton)</p>
-                        <p>만료된 라커 수 : 0 (deletebutton)</p>
+                        <p>만료된 회원 수 : ${data.expiredMembers} / ${data.memberCount}</p>
+                        <p>만료된 라커 수 : ${data.expiredLockers} / ${data.occupiedLockers}</p>
                     `;
                 }
             });

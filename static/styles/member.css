@@ -184,3 +184,9 @@ article {
   width: 150px;
   padding: 5px;
 }
+
+.align-right {
+  display: flex;
+  justify-content: flex-end;
+  margin-left: auto;
+}
