@@ -28,3 +28,9 @@ jobs:
           CSC_KEY_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
         run: npm run build
 
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: dist/
+
