@@ -26,3 +26,4 @@ jobs:
           CSC_LINK: cert.pfx
           CSC_KEY_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
         run: npm run build
+

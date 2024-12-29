@@ -8,14 +8,12 @@
         "start": "electron .",
         "build": "electron-builder"
     },
-
     "build": {
         "appId": "com.irea.golf",
         "productName": "IREAGOLF",
         "directories": {
             "output": "dist"
         },
-
         "files": [
             "main.js",
             "loginPage.html",
@@ -24,7 +22,6 @@
             "scripts/",
             "Dialog/"
         ],
-
         "win": {
             "icon": "static/icons/app-icon.ico",
             "target": "nsis",
@@ -34,7 +31,6 @@
                 "certificatePassword": "1q2w3e"
             }
         },
-
         "mac": {
             "icon": "static/icons/app-icon.icns",
             "target": [
@@ -71,11 +67,9 @@
                 }
             ]
         },
-
         "linux": {
             "icon": "static/icons/app-icons.png"
         },
-
         "nsis": {
             "oneClick": false,
             "allowToChangeInstallationDirectory": true,
