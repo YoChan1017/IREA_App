@@ -71,6 +71,7 @@
                 }
             ]
         },
+        "publish": "never",
 
         "linux": {
             "icon": "static/icons/app-icons.png"
