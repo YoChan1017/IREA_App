@@ -43,6 +43,9 @@
             "entitlementsInherit": null,
             "identity": null
         },
+        "dmg": {
+            "format": "UDZO"
+        },
 
         "linux": {
             "icon": "static/icons/app-icons.png"
