@@ -79,7 +79,9 @@
             "shortcutName": "IREAGOLF",
             "installerIcon": "static/icons/app-icon.ico",
             "uninstallerIcon": "static/icons/app-icon.ico"
-        }
+        },
+
+        "publish": "never"
     },
     "dependencies": {
         "@electron/notarize": "^2.5.0",
