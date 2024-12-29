@@ -37,14 +37,39 @@
 
         "mac": {
             "icon": "static/icons/app-icon.icns",
-            "target": ["dmg", "zip"],
+            "target": [
+                {
+                    "target": "dmg",
+                    "arch": "arm64"
+                },
+                {
+                    "target": "zip",
+                    "arch": "arm64"
+                }
+            ],
             "hardenedRuntime": false,
             "entitlements": null,
             "entitlementsInherit": null,
             "identity": null
         },
         "dmg": {
-            "format": "UDZO"
+            "format": "UDZO",
+            "window": {
+                "width": 540,
+                "height": 380
+            },
+            "contents": [
+                {
+                    "x": 130,
+                    "y": 220
+                },
+                {
+                    "x": 410,
+                    "y": 220,
+                    "type": "link",
+                    "path": "/Applications"
+                }
+            ]
         },
 
         "linux": {
