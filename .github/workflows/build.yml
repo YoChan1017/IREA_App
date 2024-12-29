@@ -4,41 +4,25 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
   build:
-    timeout-minutes: 300
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-
+    runs-on: macos-latest
+    timeout-minutes: 90
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
-      - name: Install Node.js
-        run: |
-          brew install node
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-      
-      - name: Decode and save certificate
-        run: |
-          echo "${{ secrets.CERTIFICATE_FILE }}" | base64 -d > cert.pfx
-      
+
       - name: Install dependencies
         run: npm install
-      
+
       - name: Build Electron app
         env:
           CSC_LINK: cert.pfx
           CSC_KEY_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
         run: npm run build
-
