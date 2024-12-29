@@ -81,7 +81,7 @@
             "uninstallerIcon": "static/icons/app-icon.ico"
         },
 
-        "publish": "never"
+        "publish": null
     },
     "dependencies": {
         "@electron/notarize": "^2.5.0",

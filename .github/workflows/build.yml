@@ -22,8 +22,10 @@ jobs:
         run: npm install
 
       - name: Build Electron app
-        env:
+         env:
+          GH_TOKEN: ""
           CSC_LINK: cert.pfx
           CSC_KEY_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
-        run: npm run build
+        run: npm run build  
+
 
