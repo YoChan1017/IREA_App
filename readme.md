@@ -94,7 +94,7 @@ IREA_App/
 ## 🧩 ERD 주요 테이블 (간략)
 
 ```
-[Member] ──< [LockerUsage] >── [Locker]
+[ 회원 ] ── [ 사용자 ] ── [ 라커 ]
   - member_id         - usage_id              - locker_id
   - name              - member_id (FK)        - locker_number
   - phone             - locker_id (FK)        - location
